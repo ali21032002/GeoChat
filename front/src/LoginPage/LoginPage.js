@@ -1,27 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import LoginButton from './loginComponents/loginButton';
+import LoginInput from './loginComponents/loginInput';
+import Logo from './loginComponents/logo';
+
 import './LoginPage.css';
 
-const Logo = () => {
-    return <p className='logo'>
-        GeoCall
-    </p>
-};
-
-const LoginInput = () => {
-    return <input className="l_page_input" />
-};
-
-const LoginButton = () => {
-    return <button className='l_page_login_button'>Login</button>
+const isUsernameValid = (username) => {
+    return username.length > 0 && username.length < 10 && !username.includes(' ');
 }
 
 export default function LoginPage() {
+    const [userName, setUserName] = useState('');
+    const navigate = useNavigate();
+
+    const handleLogin = () => {
+        navigate('/map');
+    }
+
     return (
         <div className='l_page_main_container'>
             <div className='l_page_box'>
                 <Logo />
-                <LoginInput />
-                <LoginButton />
+                <LoginInput userName={userName} setUserName={setUserName} />
+                <LoginButton
+                    onClickHandler={handleLogin}
+                    disabled={!isUsernameValid(userName)} />
             </div>
         </div>
     )
