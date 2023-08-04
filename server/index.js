@@ -17,12 +17,18 @@ const io = new Server(server, {
     }
 });
 
+let onlineUsers = [];
+
 io.on('connection', (socket) => {
-    console.log(`new user is connected with id ${socket.id}`);
+    console.log(`new user by id '${socket.id}' ready to connect.`);
+
+    socket.on('user-login', (data) => loginEventHandler(socket, data));
+
 
     socket.on('disconnect', () => {
         socketDisconnectHandler(socket.id);
     });
+
 });
 
 server.listen(PORT, () => {
@@ -30,5 +36,24 @@ server.listen(PORT, () => {
 });
 
 const socketDisconnectHandler = (socketId) => {
-    console.log(`user by disconnected by id :  ${socketId}`)
+    console.log(`user by disconnected by id :  ${socketId}`);
+
+    removeOnlineUser(socketId);
+}
+
+const removeOnlineUser = (socketId) => {
+
+    if (onlineUsers[socketId]) {
+        delete onlineUsers[socketId]
+    }
+
+    console.log(onlineUsers);
+}
+
+const loginEventHandler = (socket, data) => {
+    onlineUsers[socket.id] = {
+        username: data.username,
+        coords: data.coords
+    }
+    console.log(`user with id: '${socket.id}' is : \n`, onlineUsers[socket.id]);
 }
